@@ -1,0 +1,30 @@
+- name : Add Flink Service
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST -d '[{"ServiceInfo":{"service_name":"FLINK"}}]'  http://localhost:8080/api/v1/clusters/mytestcluster/services
+ 
+- name: Configure
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -d "@/home/centos/ansible-hortonworks/playbooks/roles/install_flink/tasks/body.json" -X PUT http://localhost:8080/api/v1/clusters/mytestcluster
+  
+  
+  
+- name: Add Flink Master Component
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST -d '{"components":[{"ServiceComponentInfo":{"component_name":"FLINK_MASTER"}}]}'  http://localhost:8080/api/v1/clusters/mytestcluster/services?ServiceInfo/service_name=FLINK
+
+
+
+- name: Add Hosts
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST -d '{"RequestInfo":{"query":"Hosts/host_name:ip-172-31-75-69.ec2.internal"},"Body":{"host_components":[{"HostRoles":{"component_name":"FLINK_MASTER"}}]}}'  http://localhost:8080/api/v1/clusters/mytestcluster/hosts
+
+
+- name: Install
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d '{"RequestInfo":{"context":"Install Services","operation_level":{"level":"CLUSTER","cluster_name":"mytestcluster"}},"Body":{"ServiceInfo":{"state":"INSTALLED"}}}'  http://localhost:8080/api/v1/clusters/mytestcluster/services?ServiceInfo/service_name=FLINK
+
+- name: sleep for 30 seconds and continue with play
+  wait_for: timeout=30
+  delegate_to: localhost
+
+- name : Start
+  command: curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d '{"RequestInfo":{"context":"_PARSE_.START.FLINK","operation_level":{"level":"SERVICE","cluster_name":"mytestcluster","service_name":"FLINK"}},"Body":{"ServiceInfo":{"state":"STARTED"}}}' http://localhost:8080/api/v1/clusters/mytestcluster/services/FLINK
+         
+
+  
+  

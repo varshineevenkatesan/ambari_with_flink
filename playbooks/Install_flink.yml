@@ -1,0 +1,9 @@
+---
+- import_playbook: "set_variables.yml"
+
+- name: Install Flink
+  hosts: hadoop-cluster
+  any_errors_fatal: true
+  become: yes
+  roles:
+    - Install_flink

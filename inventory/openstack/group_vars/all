@@ -1,0 +1,27 @@
+---
+cloud_config:
+  name_suffix: ''
+  zone: PS
+  admin_username: centos
+  ssh:
+    keyname: field
+    privatekey: ~/.ssh/field.pem
+
+nodes:
+  - host_group: "hdp-master"
+    count: 1
+    image: CentOS 7.4
+    flavor: m3.xlarge
+    public_ip: false
+
+  - host_group: "hdp-slave"
+    count: 2
+    image: CentOS 7.4
+    flavor: m3.large
+    public_ip: false
+
+  - host_group: "hdp-edge"
+    count: 0
+    image: CentOS 7.4
+    flavor: m3.medium
+    public_ip: false
